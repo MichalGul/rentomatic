@@ -1,5 +1,5 @@
 import uuid
-from src.domain.room import Room
+from rentomatic.domain.room import Room
 
 
 def test_room_model_init():
