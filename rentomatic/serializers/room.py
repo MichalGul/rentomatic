@@ -2,7 +2,7 @@ import json
 
 
 class RoomJsonEncoder(json.JSONEncoder):
-    # override defauly to support encoding Room objects
+    # override default to support encoding Room objects
     def default(self, o):
         try:
             # not using o.as_dict because uid.UUID is not json serializable.
