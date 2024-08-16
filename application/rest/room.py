@@ -1,13 +1,22 @@
-from flask import Blueprint, Response
+from flask import Blueprint, Response, request
 import json
 from flask.views import MethodView
 
 from rentomatic.repository.memrepo import MemRepo
 from rentomatic.use_cases.room_list import room_list_use_case
 from rentomatic.serializers.room import RoomJsonEncoder
+from rentomatic.requests.room_list import build_room_list_request
+from rentomatic.responses import ResponseTypes
 
 blueprint = Blueprint('room', __name__)
 
+STATUS_CODES = {
+    ResponseTypes.SUCCESS: 200,
+    ResponseTypes.RESOURCE_ERROR: 404,
+    ResponseTypes.PARAMETERS_ERROR: 400,
+    ResponseTypes.SYSTEM_ERROR: 500
+
+}
 
 rooms = [
     {
@@ -43,13 +52,24 @@ rooms = [
 
 class RoomList(MethodView):
     def get(self):
+
+        querry_params = {
+            "filters": {}
+        }
+
+        for arg, values in request.args.items():
+            if arg.startswith("filter_"):
+                querry_params["filters"][arg.replace("filter_", "")] = values
+
+        request_object = build_room_list_request(filters=querry_params["filters"])
+
         repo = MemRepo(rooms)
-        result = room_list_use_case(repo)
+        response = room_list_use_case(repo, request_object)
 
         return Response(
-            json.dumps(rooms, cls=RoomJsonEncoder),
+            json.dumps(response.value, cls=RoomJsonEncoder),
             mimetype="application/json",
-            status=200
+            status=STATUS_CODES[response.type],
         )
 
 
