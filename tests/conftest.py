@@ -1,6 +1,6 @@
 # remember fixtures defined in conftest files are automatically imported and globaly avaliable
 import pytest
-
+from manage import read_json_configuration
 from application.app import create_app
 
 @pytest.fixture
@@ -18,3 +18,7 @@ def pytest_addoption(parser):
 def pytest_runtest_setup(item):
     if "integration" in item.keywords and not item.config.getoption("--integration"):
         pytest.skip("need --integration option to run")
+
+@pytest.fixture(scope="session")
+def app_configuration():
+    return read_json_configuration("testing")

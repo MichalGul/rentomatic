@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:12
+    environment:
+        POSTGRES_DB: postgres
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        PGDATA: /data
+    ports:
+      - "5433:5432"
+    volumes:
+      - "pg-database:/data"
+
+
+volumes:
+  pg-database:
+
