@@ -9,3 +9,20 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "${POSTGRES_PORT}:5432"
+
+  mongo:
+   image: mongodb/mongodb-community-server:7.0.0-ubi8
+   environment:
+       MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
+       MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+   ports:
+       - "${MONGODB_PORT}:27017"
+
+
+  mongo_man:
+   image: mongodb/mongodb-community-server:7.0.0-ubi8
+   environment:
+       MONGO_INITDB_ROOT_USERNAME: root
+       MONGO_INITDB_ROOT_PASSWORD: mongodb
+   ports:
+       - "27018:27017"

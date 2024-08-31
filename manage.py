@@ -15,7 +15,7 @@ def setenv(variable, default):
     os.environ[variable] = os.getenv(variable, default)
 
 
-APPLICATION_CONFIG_PATH = "config"
+APPLICATION_CONFIG_PATH = r"F:\Kursy\Python_clean_architecture\rentomatic\config"
 DOCKER_PATH = "docker"
 
 
@@ -28,6 +28,7 @@ def docker_compose_file(config):
 
 
 def read_json_configuration(config):
+
     # Read configuration from the relative JSON file
     with open(app_config_file(config)) as f:
         config_data = json.load(f)
