@@ -2,6 +2,7 @@
 
 import os
 import json
+import signal
 import subprocess
 import time
 
@@ -10,12 +11,18 @@ import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 
+
+
 # Ensure an environment variable exists and has a value
 def setenv(variable, default):
     os.environ[variable] = os.getenv(variable, default)
 
 
-APPLICATION_CONFIG_PATH = r"F:\Kursy\Python_clean_architecture\rentomatic\config"
+setenv("APPLICATION_CONFIG", "production")
+
+
+# APPLICATION_CONFIG_PATH = r"F:\Kursy\Python_clean_architecture\rentomatic\config"
+APPLICATION_CONFIG_PATH = r"config"
 DOCKER_PATH = "docker"
 
 
@@ -102,6 +109,22 @@ def wait_for_logs(cmdline, message):
     while message not in logs.decode("utf-8"):
         time.sleep(1)
         logs = subprocess.check_output(cmdline)
+
+
+@cli.command(context_settings={"ignore_unknown_options": True})
+@click.argument("subcommand", nargs=-1, type=click.Path())
+def compose(subcommand):
+    print(os.getenv("APPLICATION_CONFIG"))
+    configure_app(os.getenv("APPLICATION_CONFIG"))
+    cmdline = docker_compose_cmdline() + list(subcommand)
+    print(cmdline)
+    print(os.getcwd())
+    try:
+        p = subprocess.Popen(cmdline)
+        p.wait()
+    except KeyboardInterrupt:
+        p.send_signal(signal.SIGINT)
+        p.wait()
 
 
 @cli.command()
