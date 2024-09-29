@@ -94,6 +94,7 @@ def run_sql(statements):
         host=os.getenv("POSTGRES_HOSTNAME"),
         port=os.getenv("POSTGRES_PORT"),
     )
+    print(os.getenv("POSTGRES_HOSTNAME"))
 
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
@@ -152,6 +153,17 @@ def test(args):
 
     cmdline = docker_compose_cmdline("down")
     subprocess.call(cmdline)
+
+@cli.command()
+def init_postgres():
+    configure_app(os.getenv("APPLICATION_CONFIG"))
+    try:
+        run_sql([f"CREATE DATABASE {os.getenv('APPLICATION_DB')}"])
+        print(f"The database {os.getenv('APPLICATION_DB')} has been created")
+    except psycopg2.errors.DuplicateDatabase:
+        print(f"The database {os.getenv('APPLICATION_DB')} already exists")
+
+
 
 
 if __name__ == "__main__":
